@@ -9,6 +9,8 @@ import Cookies from "js-cookie";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { notifyError, notifySuccess } from "@/utils/toast";
+import Input from "@/components/Input";
+import Button from "@/components/Button";
 
 interface LoginFormData {
   email: string;
@@ -16,10 +18,9 @@ interface LoginFormData {
 }
 
 const login = async (data: LoginFormData) =>
-  await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/users/login`, data);
+  await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, data);
 
 const LoginPage = () => {
-  const [isVisible, setIsVisible] = React.useState(false);
   const {
     handleSubmit,
     register,
@@ -34,16 +35,13 @@ const LoginPage = () => {
     onSuccess: (e: any) => {
       localStorage.setItem("user", JSON.stringify(e.data));
       Cookies.set("token", e.data.token);
-      console.log(e.data.token);
+      console.log(e);
 
       notifySuccess("Login successful");
-      push("/");
+      push("/contacts");
     },
-    onError: (
-      e: AxiosError<{ error: { message: string }; success: boolean }>
-    ) => {
-      notifyError(e.response.data.error.message);
-      console.log(e.response.data.error.message);
+    onError: (e: AxiosError<{ message: string }>) => {
+      notifyError(e.response?.data.message as string);
     },
   });
 
@@ -56,7 +54,6 @@ const LoginPage = () => {
     }
   };
 
-  const toggleVisibility = () => setIsVisible(!isVisible);
   return (
     <div className="mt-10 px-12 sm:px-24 md:px-48 lg:px-12 lg:mt-16 xl:px-24 xl:max-w-2xl">
       <h2
@@ -70,9 +67,7 @@ const LoginPage = () => {
           <div>
             <Input
               type="email"
-              variant="underlined"
-              label="Email"
-              {...register("email", { required: "Email is required" })}
+              register={register("email", { required: "Email is required" })}
             />
             {errors.email && (
               <span className="text-red-500">{errors.email.message}</span>
@@ -80,33 +75,17 @@ const LoginPage = () => {
           </div>
           <div className="mt-8">
             <Input
-              label="Password"
-              variant="underlined"
-              endContent={
-                <button
-                  className="focus:outline-none"
-                  type="button"
-                  onClick={toggleVisibility}
-                >
-                  {isVisible ? (
-                    <FiEyeOff className="text-2xl text-default-400 pointer-events-none" />
-                  ) : (
-                    <FiEye className="text-2xl text-default-400 pointer-events-none" />
-                  )}
-                </button>
-              }
-              type={isVisible ? "text" : "password"}
-              {...register("password", { required: "Password is required" })}
+              type="password"
+              register={register("password", {
+                required: "Password is required",
+              })}
             />
+            {errors.password && (
+              <span className="text-red-500">{errors.password.message}</span>
+            )}
           </div>
           <div className="mt-10">
-            <Button
-              isLoading={isLoading}
-              type="submit"
-              className="bg-indigo-500 text-gray-100 p-4 w-full rounded-full tracking-wide
-                      font-semibold font-display focus:outline-none focus:shadow-outline hover:bg-indigo-600
-                      shadow-lg"
-            >
+            <Button isLoading={isLoading} type="submit">
               Log In
             </Button>
           </div>
