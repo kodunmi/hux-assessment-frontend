@@ -33,8 +33,8 @@ const LoginPage = () => {
     mutationFn: login,
 
     onSuccess: (e: any) => {
-      localStorage.setItem("user", JSON.stringify(e.data));
-      Cookies.set("token", e.data.token);
+      localStorage.setItem("user", JSON.stringify(e.data.data));
+      Cookies.set("token", e.data.data.token);
       console.log(e);
 
       notifySuccess("Login successful");

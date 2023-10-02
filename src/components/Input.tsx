@@ -9,7 +9,7 @@ interface Props extends React.InputHTMLAttributes<HTMLInputElement> {
 const Input = (props: Props) => {
   return (
     <input
-      className={`input w-full ${props.className}`}
+      className={`input w-full ${props.className || ""}`}
       {...props}
       {...(props.register && props.register)}
     />
