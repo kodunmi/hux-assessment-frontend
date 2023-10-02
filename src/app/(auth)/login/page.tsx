@@ -1,7 +1,5 @@
 "use client";
 
-import { Button, Input } from "@nextui-org/react";
-
 import Link from "next/link";
 import React from "react";
 import { FiEyeOff, FiEye } from "react-icons/fi";
